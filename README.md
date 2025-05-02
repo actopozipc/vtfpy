@@ -1,5 +1,5 @@
 # vtfpy
-vtfpy is a lightweight Python library for reading and writing VTF (Visualization Tool Format) files — widely used for visualizing molecular dynamics and particle simulations in tools like VMD (Visual Molecular Dynamics).
+vtfpy is a lightweight Python library for reading and writing VTF (Visualization Tool Format) files — widely used for visualizing molecular dynamics and particle simulations in tools like [VMD](https://www.ks.uiuc.edu/Research/vmd/).
 
 This is especially helpful for students or researchers who:
 
@@ -88,8 +88,6 @@ class Particle:
 timesteps, box = read_vtf("particles.vtf", Particle)
 
 ```
-🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-If you have an idea to improve this tool — bug fixes, feature extensions, or documentation — feel free to submit a pull request or open an issue.
+## 🤝 Contributing
+As normal in FOSS software, if you have an idea to improve this tool (ug fixes, feature extensions, or documentation), just submit a pull request or open an issue.
 
