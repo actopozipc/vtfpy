@@ -1,7 +1,54 @@
 from typing import List, Any, Union, Optional, Callable
 import re
 from typing import List, Callable, Tuple, Type
+def append_vtf_timesteps(
+    particle_timesteps,
+    filename,
+    x_attr=None,
+    y_attr=None,
+    z_attr=None
+):
+    """
+    Append particle positions as timesteps to an existing VTF file
+    Assumes topology and box size are already defined in the file
 
+    Args:
+        particle_timesteps: List of particle objects or list of lists (for multiple timesteps)
+        filename: Existing .vtf file to append to
+        x_attr, y_attr, z_attr: Attribute names or callables for position extraction
+    Returns:
+        None
+    """
+
+    def get_attr(obj, name_candidates):
+        for name in name_candidates:
+            if hasattr(obj, name):
+                return getattr(obj, name)
+        raise AttributeError(f"None of {name_candidates} found in object {obj}")
+
+    def get_value(p, key, fallbacks):
+        if callable(key):
+            return key(p)
+        elif isinstance(key, str):
+            return getattr(p, key)
+        else:
+            return get_attr(p, fallbacks)
+
+    if not isinstance(particle_timesteps[0], list):
+        particle_timesteps = [particle_timesteps]
+
+    with open(filename, 'a') as f:
+        for timestep in particle_timesteps:
+            f.write("timestep\n")
+            for i, p in enumerate(timestep, start=1):
+                x = get_value(p, x_attr, ["x", "pos_x", "vector"])
+                y = get_value(p, y_attr, ["y", "pos_y", "vector"])
+                z = get_value(p, z_attr, ["z", "pos_z", "vector"])
+                # if p.vector exists and x/y/z were not given, this fallback works
+                if isinstance(x, (list, tuple, np.ndarray)) and len(x) == 3:
+                    x, y, z = x[0], x[1], x[2]
+                f.write(f"atom {i} position {x} {y} {z}\n")
+            f.write("\n")
 def write_vtf(
     particle_timesteps: Union[List[Any], List[List[Any]]],
     filename: str,
@@ -59,11 +106,7 @@ def write_vtf(
         
     """
 
-    def get_attr(obj, name_candidates):
-        for name in name_candidates:
-            if hasattr(obj, name):
-                return getattr(obj, name)
-        raise AttributeError(f"None of {name_candidates} found in object {obj}")
+    
 
     def get_value(p, key, fallbacks):
         if callable(key):
@@ -204,5 +247,4 @@ def read_vtf(
         timesteps.append(timestep)
 
     return timesteps, box_size
-
 
