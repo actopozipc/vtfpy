@@ -1,5 +1,6 @@
 from typing import List, Any, Union, Optional, Callable
 import re
+import numpy as np
 from typing import List, Callable, Tuple, Type
 def append_vtf_timesteps(
     particle_timesteps,
